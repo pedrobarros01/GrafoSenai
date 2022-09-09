@@ -22,7 +22,7 @@ typedef struct ListaAdj {
     int** edges; // ponterro de ponteiro que simboliza a lista
     int* grade; // lista de grau dos vertices, auxilia na inserção e remoção
 } ListaAdj;
-
+// modificarei ainda para uma biblio de grafos de respeito
 int main(){
     Vertice v1, v2;
     v1.tamanho = 1;
