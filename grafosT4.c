@@ -20,6 +20,7 @@ int caminhoCritico(int matriz[9][9], int verticeAtual, int* vetorResposta, int i
 	if(verticeAtual + 1 == 9){
 		vetorResposta[6] = 9;
 		return 0;
+		
 	}
 	int maior = 0, j;
 	for(j=0; j<9; j++){
