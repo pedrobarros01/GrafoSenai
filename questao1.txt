@@ -1,0 +1,1 @@
+Para resolver o problema do caixeiro viajante, precisamos ter o número de todas as rotas possíveis para aplicar a otimização combinatorial, e assim, pegar as conexões de menor valor para otimizar a rota do caixeiro.

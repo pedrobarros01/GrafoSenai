@@ -4,6 +4,7 @@
 
 
 int main(){
+    //Usamos matriz de custo
     GrafoMatriz *gf;
     gf = criaMatrizAdjCusto(9);
     insereAresta(gf, 0, 1, 3, true);
