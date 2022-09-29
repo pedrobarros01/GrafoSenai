@@ -1,12 +1,13 @@
 #ifndef LISTAGRAFOS_H
 #define LISTAGRAFOS_H
+#define CINZA 1
+#define BRANCO 0
+#define PRETO 2
 #include<stdlib.h>
 #include<stdbool.h>
 #include<stdio.h>
 #include "fila.h"
-
-
-
+#include "lista.h"
 typedef int Vertice;
 typedef double Peso;
 typedef struct NO_ADJ {
@@ -21,12 +22,17 @@ typedef struct GrafoLista {
     bool eh_com_peso;
     listaAdj lista;
 } GrafoLista;
-typedef struct VerticeBusca {
+typedef struct VerticeBuscaLargura{
     Vertice dado;
     int distancia;
     int visitado;
-    struct VerticeBusca *p;
-} VerticeBusca;
+    struct VerticeBuscaLargura *p;
+} VerticeBuscaLargura;
+
+typedef struct VerticeBuscaProfundida{
+    Vertice dado;
+    int visitado;
+} VerticeBuscaProfundida;
 GrafoLista* criarGrafo(int quantVertices, bool eh_digrafo, bool eh_com_peso){
     GrafoLista *gf = (GrafoLista*)malloc(sizeof(GrafoLista));
     if(gf == NULL){
@@ -85,23 +91,23 @@ NO_ADJ *lista;
         printf("\n");
     }
 }
-VerticeBusca** BuscaLargura(GrafoLista *gf, Vertice raiz){
-    VerticeBusca **vetor = (VerticeBusca**)malloc(gf->quantVertices* sizeof(VerticeBusca));
+VerticeBuscaLargura** BuscaLargura(GrafoLista *gf, Vertice raiz){
+    VerticeBuscaLargura **vetor = (VerticeBuscaLargura**)malloc(gf->quantVertices* sizeof(VerticeBuscaLargura));
 	FILA *filaVertice = cria_fila();
     int i;
     for(i=0; i < gf->quantVertices; i++){
-        vetor[i] = (VerticeBusca*)malloc(sizeof(VerticeBusca));
+        vetor[i] = (VerticeBuscaLargura*)malloc(sizeof(VerticeBuscaLargura));
     }
     for(i=0; i < gf->quantVertices; i++){
         vetor[i]->dado = i;
-        vetor[i]->visitado = 0;
+        vetor[i]->visitado = BRANCO;
         vetor[i]->distancia = -1;
         vetor[i]->p = NULL;
     }
 	vetor[0]->dado = raiz;
     vetor[0]->distancia = 0;
     vetor[0]->p = NULL;
-    vetor[0]->visitado = 1;
+    vetor[0]->visitado = CINZA;
 	enfileira(filaVertice, raiz);
 	while(!fila_vazia(filaVertice)){
 		Vertice dado = desenfileira(filaVertice);
@@ -110,16 +116,44 @@ VerticeBusca** BuscaLargura(GrafoLista *gf, Vertice raiz){
 		for(aux=gf->lista[dado]; aux != NULL; aux=aux->prox){
 			if(!vetor[aux->vertice]->visitado){             
                 vetor[aux->vertice]->p = vetor[dado];
-				vetor[aux->vertice]->visitado = 1;
+				vetor[aux->vertice]->visitado = CINZA;
 				vetor[aux->vertice]->distancia = vetor[dado]->distancia + 1;
                 enfileira(filaVertice, aux->vertice);
 			}
 		}
-        vetor[dado]->visitado = 2;
+        vetor[dado]->visitado = PRETO;
 		//gf->lista[dado.dado].vertice.visitado = 2;
 		
 	}
 	destroi_fila(filaVertice);
 	return vetor;
 }
+
+void BuscaEmProfundidadeAux(GrafoLista *gf, Vertice atual, int *vetorVisitado){
+    vetorVisitado[atual] = CINZA;
+    NO_ADJ *aux;
+    for(aux = gf->lista[atual]; aux != NULL; aux=aux->prox){
+        if(vetorVisitado[aux->vertice] == BRANCO){
+            BuscaEmProfundidadeAux(gf, aux->vertice, vetorVisitado);
+        }
+    }
+}
+
+int* BuscaEmProfundidade(GrafoLista *gf){
+    int i;
+    int *vetorVisitado = (int*)malloc(gf->quantVertices*sizeof(int));
+    for(i = 0; i < gf->quantVertices; i++){
+        vetorVisitado[i] = BRANCO;
+    }
+    for(i = 0; i < gf->quantVertices; i++){
+        if(vetorVisitado[i] == BRANCO){
+            BuscaEmProfundidadeAux(gf, i, vetorVisitado);
+        }
+        vetorVisitado[i] = PRETO;
+    }
+    return vetorVisitado;
+
+    
+}
+
 #endif

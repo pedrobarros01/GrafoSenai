@@ -3,22 +3,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-typedef struct VerticeBusca {
-    int dado;
-    int distancia;
-    int visitado;
-    VerticeBusca *p;
-} VerticeBusca;
+#include "arvores.h"
 
 
 // Pedro Barros
-typedef struct no{
-	VerticeBusca dados;
-	struct no *prox;
-} NO;
+typedef struct LISTA_NO{
+	tp_arvore *raiz;
+	struct LISTA_NO *prox;
+} LISTA_NO;
 
-typedef NO* LISTA; // Ponteiro para um Ponteiro
+typedef LISTA_NO* LISTA; // Ponteiro para um Ponteiro
 
 LISTA* cria_lista(){ // ela irá alocar um espaço na memória;
 	LISTA *li = (LISTA*) malloc(sizeof(LISTA));
@@ -33,17 +27,17 @@ int listase_vazia(LISTA *l){
 }
 
 // Função que insere ao final da lista
-int insere_listase(LISTA *l, VerticeBusca c){ // Esse *l é um ponteiro que está apontando para outro ponteiro para o endereço de memória original da LISTA*, o que está apontando para o NULL
+int insere_listase(LISTA *l, tp_arvore *c){ // Esse *l é um ponteiro que está apontando para outro ponteiro para o endereço de memória original da LISTA*, o que está apontando para o NULL
 	if(l==NULL) return 0;
-	NO *novo_no = (NO*)malloc(sizeof(NO));
+	LISTA_NO *novo_no = (LISTA_NO*)malloc(sizeof(LISTA_NO));
 	if(novo_no==NULL) return 0; // Não alocou memória
 	// atribuir os valores para o novo nó;
-	novo_no->dados = c;
+	novo_no->raiz = c;
 	novo_no->prox = NULL;
 	if((*l)==NULL)// Lista está vazia, vamos inserir no início
 		*l = novo_no;
 	else{
-		NO *aux = *l;              // novo_no { Z, NULL }
+		LISTA_NO *aux = *l;              // novo_no { Z, NULL }
 		while(aux->prox != NULL){  // aux = F
 			                       // |A ->B| |B ->F| |F ->Z| |Z ->NULL|
 			aux = aux->prox;
@@ -55,12 +49,12 @@ int insere_listase(LISTA *l, VerticeBusca c){ // Esse *l é um ponteiro que est�
 
 
 void imprime_listase(LISTA *l){
-	NO *aux = *l;
+	LISTA_NO *aux = *l;
 	while (aux!=NULL){
-		printf("%d ", aux->dados);
+		pre_ordem_arvore(aux->raiz);
 		aux=aux->prox;
 	}
-	printf("\n");
+	printf("\n\n\n");
 }
 
 

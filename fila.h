@@ -4,14 +4,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-typedef struct no{
+typedef struct FILA_NO{
 	int dados;
-	struct no *prox;
-} NO;
+	struct FILA_NO *prox;
+} FILA_NO;
 
 typedef struct{
-	NO *ini;
-	NO *fim;
+	FILA_NO *ini;
+	FILA_NO *fim;
 }FILA; 
 
 
@@ -37,7 +37,7 @@ int fila_vazia(FILA *f){
 
 int enfileira(FILA *f, int p){ 
 	if(f==NULL) return 0;
-	NO *novo_no = (NO*)malloc(sizeof(NO));
+	FILA_NO *novo_no = (FILA_NO*)malloc(sizeof(FILA_NO));
 	if(novo_no==NULL) return 0; // Não alocou memória
 	// atribuir os valores para o novo nó;
 	novo_no->dados = p;
@@ -55,7 +55,7 @@ int enfileira(FILA *f, int p){
 
 int desenfileira(FILA *f){ 
 	if(f==NULL) return 0;
-	NO *aux = f->ini;
+	FILA_NO *aux = f->ini;
 	
 	
 	// Desloca o inicio fazendo-o apontar para o próximo nó
@@ -68,7 +68,7 @@ int desenfileira(FILA *f){
 }
 
 void destroi_fila(FILA *f){
-	NO *atu = f->ini;
+	FILA_NO *atu = f->ini;
 	while (atu!=NULL){
 		f->ini=atu->prox;
 		free(atu);
