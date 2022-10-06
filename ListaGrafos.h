@@ -149,7 +149,7 @@ void BuscaEmProfundidadeAux(GrafoLista *gf, Vertice atual, VerticeBuscaProfundid
     vetor[atual].visitado = PRETO;
 }
 
-VerticeBuscaProfundida* BuscaEmProfundidade(GrafoLista *gf, VerticeBuscaProfundida *vetor){
+void BuscaEmProfundidade(GrafoLista *gf, VerticeBuscaProfundida *vetor){
     int i;
     tempo = 0;
     for(i = 0; i < gf->quantVertices; i++){
@@ -165,9 +165,29 @@ VerticeBuscaProfundida* BuscaEmProfundidade(GrafoLista *gf, VerticeBuscaProfundi
         }
         
     }
-    return vetor;
 
     
 }
+void bubbleSort(VerticeBuscaProfundida *vetor, int tamanho){
+    int i, j;
+    for(i = 0; i < tamanho - 1; i++){
+        for(j = 0; j < tamanho - i - 1; j++){
+            if(vetor[j].tempoF < vetor[j + 1].tempoF){
+                VerticeBuscaProfundida temp = vetor[j];
+                vetor[j] = vetor[j + 1];
+                vetor[j+1] = temp;
+            }
+        }
+    }
+}
+
+VerticeBuscaProfundida* ordenacaoTopologica(GrafoLista *gf){
+    VerticeBuscaProfundida *vetor = (VerticeBuscaProfundida*)malloc(gf->quantVertices * sizeof(VerticeBuscaProfundida));
+    BuscaEmProfundidade(gf, vetor);
+    bubbleSort(vetor, gf->quantVertices);
+    return vetor;
+}
+
+
 
 #endif

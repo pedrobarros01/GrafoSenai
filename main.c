@@ -7,16 +7,20 @@ int main(){
 	inserirAresta(gf, 0, 2, 0, false);
 	inserirAresta(gf, 2, 3, 0, false);
 	inserirAresta(gf, 4, 5, 0, false);
-	VerticeBuscaProfundida vetor[gf->quantVertices];
-	BuscaEmProfundidade(gf, vetor);
+	VerticeBuscaProfundida *vetor;
+	vetor = ordenacaoTopologica(gf);
 	int i;
 	for(i = 0; i < gf->quantVertices; i++){
-		printf("=====VERTICE %d=====\n", i);
-		printf("visitado: %d\n", vetor[i].visitado);
-		printf("tempoD: %d\n", vetor[i].tempoD);
-		printf("tempoF: %d\n", vetor[i].tempoF);
-		printf("predecessor: %d\n", vetor[i].p);
+		printf("=====VERTICE %d=====\n", vetor[i].dado);
 	}
     
     return 0;
 }
+
+/*
+printf("=====VERTICE %d=====\n", i);
+		printf("visitado: %d\n", vetor[i].visitado);
+		printf("tempoD: %d\n", vetor[i].tempoD);
+		printf("tempoF: %d\n", vetor[i].tempoF);
+		printf("predecessor: %d\n", vetor[i].p);
+*/
