@@ -32,6 +32,9 @@ typedef struct VerticeBuscaLargura{
 typedef struct VerticeBuscaProfundida{
     Vertice dado;
     int visitado;
+    int tempoD;
+    int tempoF;
+    int p;
 } VerticeBuscaProfundida;
 GrafoLista* criarGrafo(int quantVertices, bool eh_digrafo, bool eh_com_peso){
     GrafoLista *gf = (GrafoLista*)malloc(sizeof(GrafoLista));
@@ -129,29 +132,40 @@ VerticeBuscaLargura** BuscaLargura(GrafoLista *gf, Vertice raiz){
 	return vetor;
 }
 
-void BuscaEmProfundidadeAux(GrafoLista *gf, Vertice atual, int *vetorVisitado){
-    vetorVisitado[atual] = CINZA;
+int tempo;
+void BuscaEmProfundidadeAux(GrafoLista *gf, Vertice atual, VerticeBuscaProfundida *vetor){
+	tempo = tempo + 1;
+	vetor[atual].tempoD = tempo;
+    vetor[atual].visitado = CINZA;
     NO_ADJ *aux;
     for(aux = gf->lista[atual]; aux != NULL; aux=aux->prox){
-        if(vetorVisitado[aux->vertice] == BRANCO){
-            BuscaEmProfundidadeAux(gf, aux->vertice, vetorVisitado);
+        if(vetor[aux->vertice].visitado == BRANCO){
+        	vetor[aux->vertice].p = aux->vertice;
+            BuscaEmProfundidadeAux(gf, aux->vertice, vetor);
         }
     }
+    tempo = tempo + 1;
+    vetor[atual].tempoF = tempo;
+    vetor[atual].visitado = PRETO;
 }
 
-int* BuscaEmProfundidade(GrafoLista *gf){
+VerticeBuscaProfundida* BuscaEmProfundidade(GrafoLista *gf, VerticeBuscaProfundida *vetor){
     int i;
-    int *vetorVisitado = (int*)malloc(gf->quantVertices*sizeof(int));
+    tempo = 0;
     for(i = 0; i < gf->quantVertices; i++){
-        vetorVisitado[i] = BRANCO;
+        vetor[i].visitado = BRANCO;
+        vetor[i].tempoD = vetor[i].tempoF = tempo;
+        vetor[i].dado = i;
+        vetor[i].p = 0;
+        
     }
     for(i = 0; i < gf->quantVertices; i++){
-        if(vetorVisitado[i] == BRANCO){
-            BuscaEmProfundidadeAux(gf, i, vetorVisitado);
+        if(vetor[i].visitado == BRANCO){
+            BuscaEmProfundidadeAux(gf, i, vetor);
         }
-        vetorVisitado[i] = PRETO;
+        
     }
-    return vetorVisitado;
+    return vetor;
 
     
 }
