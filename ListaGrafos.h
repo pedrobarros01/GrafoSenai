@@ -70,10 +70,18 @@ bool inserirAresta(GrafoLista *gf, int origem, int destino, Peso peso, bool eh_d
     if(gf->eh_com_peso){
         novo_no->peso = peso;
     }
+    novo_no->prox = NULL;
     //caso for grafo
-    novo_no->prox = gf->lista[origem];
-    gf->lista[origem] = novo_no;
-    
+    if(gf->lista[origem] == NULL){
+        novo_no->prox = gf->lista[origem];
+        gf->lista[origem] = novo_no;
+    }else{
+        NO_ADJ *aux = gf->lista[origem];
+        while(aux->prox !=NULL){
+            aux = aux->prox;
+        }
+        aux->prox = novo_no;
+    }
     if(!eh_digrafo){
         inserirAresta(gf, destino, origem, peso, true);
     }

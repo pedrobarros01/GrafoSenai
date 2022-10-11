@@ -7,12 +7,13 @@ int main(){
 	inserirAresta(gf, 0, 2, 0, false);
 	inserirAresta(gf, 2, 3, 0, false);
 	inserirAresta(gf, 4, 5, 0, false);
-	VerticeBuscaProfundida *vetor;
+	imprimeLista(gf);
+	/* VerticeBuscaProfundida *vetor;
 	vetor = ordenacaoTopologica(gf);
 	int i;
 	for(i = 0; i < gf->quantVertices; i++){
 		printf("=====VERTICE %d=====\n", vetor[i].dado);
-	}
+	} */
     
     return 0;
 }
