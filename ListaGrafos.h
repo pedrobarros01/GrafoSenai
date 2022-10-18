@@ -8,6 +8,7 @@
 #include<stdio.h>
 #include "fila.h"
 #include "lista.h"
+#include "pilha.h"
 typedef int Vertice;
 typedef double Peso;
 typedef struct NO_ADJ {
@@ -195,6 +196,41 @@ VerticeBuscaProfundida* ordenacaoTopologica(GrafoLista *gf){
     bubbleSort(vetor, gf->quantVertices);
     return vetor;
 }
+PILHA* ordenacaoTopologicaKahn(GrafoLista *gf){
+	int vetorI[gf->quantVertices];
+	int i;
+	NO_ADJ *aux;
+	for(i = 0; i<gf->quantVertices; i++){
+		vetorI[i] = 0;
+	}
+	for(i = 0; i < gf->quantVertices; i++){
+		for(aux=gf->lista[i]; aux != NULL; aux=aux->prox){
+			vetorI[aux->vertice] += 1; 
+		}
+	}
+	
+	PILHA* L = criar_pilha();
+	PILHA* S = criar_pilha();
+	for(i = 0; i < gf->quantVertices; i++){
+		if(vetorI[i] == 0){
+			empilhar(S, i);
+		}
+	}
+	while(!pilha_vazia(S)){
+		int v = desempilhar(S);
+		empilhar(L, v);
+		for(aux=gf->lista[v]; aux != NULL; aux=aux->prox){
+			vetorI[aux->vertice] -= 1;
+			if(vetorI[aux->vertice] == 0){
+				empilhar(S, aux->vertice);
+			}
+		}
+	}
+	return L;
+	
+	
+}
+
 
 
 
