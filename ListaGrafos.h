@@ -3,6 +3,7 @@
 #define CINZA 1
 #define BRANCO 0
 #define PRETO 2
+#define INFINITO INT_MAX
 #include<stdlib.h>
 #include<stdbool.h>
 #include<stdio.h>
@@ -29,7 +30,10 @@ typedef struct VerticeBuscaLargura{
     int visitado;
     struct VerticeBuscaLargura *p;
 } VerticeBuscaLargura;
-
+typedef struct VerticeDjikstra{
+    int d;
+    int p;
+} VerticeDjikstra;
 typedef struct VerticeBuscaProfundida{
     Vertice dado;
     int visitado;
@@ -57,6 +61,17 @@ bool temVertice(int vertice, GrafoLista *gf){
         return true;
     }
     return false;
+}
+Peso qualPeso(GrafoLista *gf, int origem, int destino){
+    NO_ADJ *aux;
+    Peso peso = 0;
+    for(aux=gf->lista[origem]; aux != NULL; aux=aux->prox){
+        if(aux->vertice == destino){
+            peso = aux->peso;
+            break;
+        }
+    }
+    return peso;
 }
 bool inserirAresta(GrafoLista *gf, int origem, int destino, Peso peso, bool eh_digrafo){
     if(!temVertice(origem, gf) || !temVertice(destino, gf)){
@@ -230,7 +245,42 @@ PILHA* ordenacaoTopologicaKahn(GrafoLista *gf){
 	
 	
 }
+void relaxamento(VerticeDjikstra *vetor, Vertice origem, Vertice destino, Peso peso){
+    
+}
+VerticeDjikstra* djikstra(GrafoLista *gf, Vertice comeco){
+    VerticeDjikstra *vetor = (VerticeDjikstra*)malloc(gf->quantVertices*sizeof(VerticeDjikstra));
+    int i;
+    for(i = 0; i < gf->quantVertices; i++){
+        vetor[i].d = INFINITO;
+        vetor[i].p = -1; // -1 aqui considera como null, nao quero usar ponteiro
+    }
+    vetor[comeco].d = 0;
+    vetor[comeco].p = -1;
+    LISTA *Q = cria_lista();
+    for(i = 0; i < gf->quantVertices; i++){
+        insere_listase(Q, i, vetor[i].d);
+    }
+    imprime_listase(Q);
+    while(tamanho(Q) != 0){
+        int u = buscarMenor(Q);
+        for(i = 0; i < gf->quantVertices; i++){
+            atualizarDistancias(Q, i, vetor[i].d);
+        }
+        NO_ADJ *aux;
+        for(aux=gf->lista[u]; aux != NULL; aux=aux->prox){
+            Peso peso = qualPeso(gf, u, aux->vertice);
+            if(vetor[aux->vertice].d > vetor[u].d + peso){
+                vetor[aux->vertice].d = vetor[u].d + peso;
+                vetor[aux->vertice].p = u;
+            }
+        }
+               
+    }
+    return vetor;
+    
 
+}
 
 
 

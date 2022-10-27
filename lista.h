@@ -8,7 +8,8 @@
 
 // Pedro Barros
 typedef struct LISTA_NO{
-	int dado;
+	int vertice;
+	int d;
 	struct LISTA_NO *prox;
 } LISTA_NO;
 
@@ -25,14 +26,23 @@ int listase_vazia(LISTA *l){
 	if(l==NULL) return 1;
 	return 0;
 }
-
+int tamanho(LISTA *l){
+	int tam = 0;
+	LISTA_NO *aux = *l;
+	while(aux != NULL){
+		tam++;
+		aux=aux->prox;
+	}
+	return tam;
+}
 // Função que insere ao final da lista
-int insere_listase(LISTA *l, int c){ // Esse *l é um ponteiro que está apontando para outro ponteiro para o endereço de memória original da LISTA*, o que está apontando para o NULL
+int insere_listase(LISTA *l, int vertice, int d){ // Esse *l é um ponteiro que está apontando para outro ponteiro para o endereço de memória original da LISTA*, o que está apontando para o NULL
 	if(l==NULL) return 0;
 	LISTA_NO *novo_no = (LISTA_NO*)malloc(sizeof(LISTA_NO));
 	if(novo_no==NULL) return 0; // Não alocou memória
 	// atribuir os valores para o novo nó;
-	novo_no->dado = c;
+	novo_no->vertice = vertice;
+	novo_no->d = d;
 	novo_no->prox = NULL;
 	if((*l)==NULL)// Lista está vazia, vamos inserir no início
 		*l = novo_no;
@@ -52,21 +62,43 @@ void imprime_listase(LISTA *l){
 	LISTA_NO *aux = *l;
 	while (aux!=NULL){
 		if(aux->prox == NULL){
-			printf("%d", aux->dado);
+			printf("%d e %d", aux->vertice, aux->d);
 		}else{
-			printf("%d -> ", aux->dado); 
+			printf("%d e %d -> ", aux->vertice, aux->d); 
 		}
 		aux=aux->prox;
 	}
-	printf("\n\n\n");
+	printf("1\n");
+}
+void atualizarDistancias(LISTA *l, int vertice, int dist){
+	LISTA_NO *aux = *l;
+	while(aux != NULL){
+		if(aux->vertice == vertice){
+			aux->d = dist;
+		}
+		aux = aux->prox;
+	}
+}
+int buscar_posRemover(LISTA *l, int vertice){
+	int c = 1, posRemover = 1;
+	if(l==NULL) return 0;
+	LISTA_NO *aux = *l;
+	while(aux != NULL){
+		if(aux->vertice == vertice){
+			posRemover = c;
+		}
+		c++;
+		aux=aux->prox;
+	}
+	return posRemover;
 }
 int buscar_posMenor(LISTA *l){
 	int c = 1, menor = 276447232, posMenor = 1;
 	if(l == NULL) return 0;
 	LISTA_NO *anterior, *aux = *l;
 	while(aux != NULL){
-		if(aux->dado < menor){
-			menor = aux->dado;
+		if(aux->d < menor){
+			menor = aux->d;
 			posMenor = c;
 		}
 		aux = aux->prox;
@@ -86,11 +118,11 @@ int buscar_remover(LISTA *l, int pos){
 	} 
 	if(aux == NULL) return 0;
 	if(aux == *l){
-		answer = aux->dado;
+		answer = aux->vertice;
 		*l = aux->prox;
 	}else{
 		
-		answer = aux->dado;
+		answer = aux->vertice;
 		anterior->prox = aux->prox;
 		free(aux);
 	}
