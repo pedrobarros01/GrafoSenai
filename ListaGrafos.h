@@ -11,7 +11,7 @@
 #include "lista.h"
 #include "pilha.h"
 typedef int Vertice;
-typedef double Peso;
+typedef int Peso;
 typedef struct NO_ADJ {
     Vertice vertice;
     Peso peso;
@@ -74,6 +74,7 @@ Peso qualPeso(GrafoLista *gf, int origem, int destino){
     return peso;
 }
 bool inserirAresta(GrafoLista *gf, int origem, int destino, Peso peso, bool eh_digrafo){
+    //printf("%d\n", peso);
     if(!temVertice(origem, gf) || !temVertice(destino, gf)){
         return false;
     }
@@ -112,7 +113,7 @@ NO_ADJ *lista;
         printf("%d: ", i);
         lista = gf->lista[i];
         while(lista != NULL){
-            printf("%d ", lista->vertice);
+            printf("%d | Peso: %d ,", lista->vertice, lista->peso);
             lista=lista->prox;
         }
         printf("\n");
@@ -281,7 +282,45 @@ VerticeDjikstra* djikstra(GrafoLista *gf, Vertice comeco){
     
 
 }
+/*
+Prim -> gera um grafo conexo de custo minimo
 
+*/
+// serve pra grafos com pesos negativos
+// nao servem para digrafo
+GrafoLista* prim(GrafoLista *gf, Vertice fonte){
+    GrafoLista* grafoPrim = criarGrafo(gf->quantVertices, gf->eh_digrafo, gf->eh_com_peso);
+    int* key = (int*)malloc(gf->quantVertices*sizeof(int));
+    int* pai = (int*)malloc(gf->quantVertices*sizeof(int));
+    int i;
+    for(i=0; i < gf->quantVertices; i++){
+        key[i] = INFINITO;
+        pai[i] = -1;
+    }
+    key[fonte] = 0;
+    LISTA* Q = cria_lista();
+    for(i=0; i < gf->quantVertices; i++){
+        insere_listase(Q, i, key[i]);
+    }
+    while(tamanho(Q) != 0){
+        Vertice u = buscarMenor(Q);
+        NO_ADJ  *aux;
+        for(aux=gf->lista[u]; aux != NULL; aux=aux->prox){
+            int v = aux->vertice;
+            if(pertence(Q, aux->vertice) && (qualPeso(gf, u, v) < key[v])){
+                key[v] = qualPeso(gf, u, v);
+                pai[v] = u;
+                atualizarDistancias(Q, v, key[v]);            
+            }
+        }
+    }
+    for(i = 0; i < gf->quantVertices; i++){
+        if(i != fonte){
+            inserirAresta(grafoPrim, pai[i], i, key[i], false);
+        }
+    }
+    return grafoPrim;
+}
 
 
 #endif

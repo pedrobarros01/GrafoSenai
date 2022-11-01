@@ -143,4 +143,31 @@ void destroi_listase(LISTA *l){
 	}
 	free(l);
 }
+
+int pertence(LISTA* l, int vertice){
+	int pertence = 0;
+	LISTA_NO *atu = *l;
+	while(atu != NULL){
+		if(atu->vertice == vertice){
+			pertence = 1;
+			break;
+		}
+
+		atu=atu->prox;
+	}
+	return pertence;
+}
+int saberPeso(LISTA* l, int vertice){
+	int peso = 0;
+	LISTA_NO *atu = *l;
+	while(atu != NULL){
+		if(atu->vertice == vertice){
+			peso = atu->d;
+			break;
+		}
+
+		atu=atu->prox;
+	}
+	return peso;
+}
 #endif
