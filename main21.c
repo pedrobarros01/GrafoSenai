@@ -2,7 +2,30 @@
 #include "ListaGrafos.h"
 
 int main(){
-    GrafoLista *gf = criarGrafo(5, false, true);
+    GrafoLista *gf = criarGrafo(3, false, false);
+	inserirAresta(gf, 0, 1, 0, false);
+	inserirAresta(gf, 1, 2, 0, false);
+	// mudr logica para desconsiderar o ida-volta do grafo
+	int ordeem = ordemGrafo(gf);
+	int tam = tamanhoGrafo(gf);
+	int maxArco = maximoArestas(gf);
+	double densi = densidade(gf);
+	
+	Grau grauAux = grau(gf);
+	printf("ordem: %d\n", ordeem);
+	printf("tamanho: %d\n", tam);
+	printf("densidade: %lf\n", densi);
+	printf("maxArco: %d\n", maxArco);
+	int i;
+	printf("\nLISTA GRAU\n\n");
+	for(i=0; i < gf->quantVertices; i++){
+		printf("Vertice %d\n", i+1);
+		printf("grau: %d\n", grauAux.grauGrafo[i]);
+		printf("\n");
+	}
+	return 0;
+}
+/* GrafoLista *gf = criarGrafo(5, false, true);
     //VerticeDjikstra *vetor;
 	inserirAresta(gf, 0, 1, 3, false);
 	inserirAresta(gf, 0, 2, 5, false);
@@ -29,9 +52,6 @@ int main(){
 		printf("distancia: %d\n", vetor[i].d);
 		printf("pai: %d\n", vetor[i].p);
 	} */
-    return 0;
-}
-
 /*
 printf("=====VERTICE %d=====\n", i);
 		printf("visitado: %d\n", vetor[i].visitado);

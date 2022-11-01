@@ -41,6 +41,15 @@ typedef struct VerticeBuscaProfundida{
     int tempoF;
     int p;
 } VerticeBuscaProfundida;
+typedef struct GrauDigrafo{
+	int saida;
+	int entrada;
+} GrauDigrafo;
+typedef struct Grau{
+    GrauDigrafo *vetor;
+    int *grauGrafo;
+}Grau;
+
 GrafoLista* criarGrafo(int quantVertices, bool eh_digrafo, bool eh_com_peso){
     GrafoLista *gf = (GrafoLista*)malloc(sizeof(GrafoLista));
     if(gf == NULL){
@@ -118,6 +127,83 @@ NO_ADJ *lista;
         }
         printf("\n");
     }
+}
+int ordemGrafo(GrafoLista *gf){
+	return gf->quantVertices;
+}
+int tamanhoGrafo(GrafoLista *gf){
+	int tamanhoGrafo = 0;
+	int i;
+	for( i =0; i < gf->quantVertices; i++){
+		NO_ADJ *aux;
+		for(aux = gf->lista[i]; aux != NULL; aux=aux->prox){
+			tamanhoGrafo++;
+		}
+	}	
+	return tamanhoGrafo;
+}
+
+int maximoArestas(GrafoLista *gf){
+	if(gf->eh_digrafo){
+		
+		return gf->quantVertices * (gf->quantVertices - 1);
+	}
+	
+	return (gf->quantVertices * (gf->quantVertices - 1)) / 2;
+}
+
+double densidade(GrafoLista * gf){
+	return tamanhoGrafo(gf) / (double)maximoArestas(gf);
+}
+int SaberEntrada(GrafoLista *gf,  Vertice dado){
+	int i, entrada = 0;
+	for(i = 0; i < gf->quantVertices; i++){
+		if( i != dado){
+			NO_ADJ *aux;
+		for(aux = gf->lista[i]; aux != NULL; aux=aux->prox){
+			if(aux->vertice == dado){
+				entrada++;
+			}
+		}
+		}
+	}
+	return entrada;
+}
+int saberSaida(GrafoLista *gf, Vertice dado){
+	int saida = 0;
+	NO_ADJ *aux;
+	for(aux = gf->lista[dado]; aux != NULL; aux=aux->prox){
+		saida++;
+	}
+	return saida;
+}
+
+Grau grau(GrafoLista *gf){
+    Grau grau;
+    grau.vetor = (GrauDigrafo*)malloc(gf->quantVertices*sizeof(GrauDigrafo));
+    grau.grauGrafo = (int*)malloc(gf->quantVertices*sizeof(int));
+    int i;
+    for(i = 0; i <gf->quantVertices; i++){
+        grau.grauGrafo[i] = 0;
+    }
+	if(gf->eh_digrafo){
+		int j;
+		for(j = 0; j < gf->quantVertices; j++){
+			grau.vetor[j].entrada = SaberEntrada(gf, j);
+			grau.vetor[j].saida = saberSaida(gf, j);
+		}
+	}else{
+		int i;
+        for( i =0; i < gf->quantVertices; i++){
+            NO_ADJ *aux;
+            for(aux = gf->lista[i]; aux != NULL; aux=aux->prox){
+                grau.grauGrafo[i]++;
+            }
+        }
+	}
+
+    return grau;
+	
 }
 VerticeBuscaLargura** BuscaLargura(GrafoLista *gf, Vertice raiz){
     VerticeBuscaLargura **vetor = (VerticeBuscaLargura**)malloc(gf->quantVertices* sizeof(VerticeBuscaLargura));
@@ -284,7 +370,6 @@ VerticeDjikstra* djikstra(GrafoLista *gf, Vertice comeco){
 }
 /*
 Prim -> gera um grafo conexo de custo minimo
-
 */
 // serve pra grafos com pesos negativos
 // nao servem para digrafo
