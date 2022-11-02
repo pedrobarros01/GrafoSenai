@@ -49,6 +49,11 @@ typedef struct Grau{
     GrauDigrafo *vetor;
     int *grauGrafo;
 }Grau;
+typedef struct ArestaKruskal{
+    Vertice fonte;
+    Vertice destino;
+    Peso peso;
+}ArestaKruskal;
 
 GrafoLista* criarGrafo(int quantVertices, bool eh_digrafo, bool eh_com_peso){
     GrafoLista *gf = (GrafoLista*)malloc(sizeof(GrafoLista));
@@ -139,8 +144,11 @@ int tamanhoGrafo(GrafoLista *gf){
 		for(aux = gf->lista[i]; aux != NULL; aux=aux->prox){
 			tamanhoGrafo++;
 		}
-	}	
-	return tamanhoGrafo;
+	}
+    if(gf->eh_digrafo){
+	    return tamanhoGrafo;
+    }
+    return tamanhoGrafo / 2;
 }
 
 int maximoArestas(GrafoLista *gf){
@@ -160,11 +168,11 @@ int SaberEntrada(GrafoLista *gf,  Vertice dado){
 	for(i = 0; i < gf->quantVertices; i++){
 		if( i != dado){
 			NO_ADJ *aux;
-		for(aux = gf->lista[i]; aux != NULL; aux=aux->prox){
-			if(aux->vertice == dado){
-				entrada++;
-			}
-		}
+            for(aux = gf->lista[i]; aux != NULL; aux=aux->prox){
+                if(aux->vertice == dado){
+                    entrada++;
+                }
+            }
 		}
 	}
 	return entrada;
@@ -270,15 +278,42 @@ void BuscaEmProfundidade(GrafoLista *gf, VerticeBuscaProfundida *vetor){
         vetor[i].p = 0;
         
     }
-    for(i = 0; i < gf->quantVertices; i++){
+     for(i = 0; i < gf->quantVertices; i++){
         if(vetor[i].visitado == BRANCO){
             BuscaEmProfundidadeAux(gf, i, vetor);
         }
         
+    }    
+}
+bool achou;
+void dfsAux(GrafoLista *gf, Vertice atual, Vertice destino, bool *vetVisitado){
+    vetVisitado[atual] = true;
+    NO_ADJ *aux;
+    for(aux=gf->lista[atual]; aux != NULL; aux=aux->prox){
+        if(aux->vertice == destino){
+            achou = true;
+        }
+        if(!achou && !vetVisitado[aux->vertice]){
+            dfsAux(gf, aux->vertice, destino, vetVisitado);
+        }
     }
 
-    
 }
+/* 
+nova dfs para achar se contem ligação de fonte para destino
+ */
+bool dfs(GrafoLista *gf, Vertice fonte, Vertice destino){
+    achou = false;
+    bool *vetVisitado = (bool*)malloc(gf->quantVertices*sizeof(bool));
+    int i;
+    for(i = 0; i <gf->quantVertices; i++){
+        vetVisitado[i] = false;
+    }
+    dfsAux(gf, fonte, destino, vetVisitado);
+    
+    return achou;
+}
+
 void bubbleSort(VerticeBuscaProfundida *vetor, int tamanho){
     int i, j;
     for(i = 0; i < tamanho - 1; i++){
@@ -291,7 +326,18 @@ void bubbleSort(VerticeBuscaProfundida *vetor, int tamanho){
         }
     }
 }
-
+void bubbleSortKruskal(ArestaKruskal *vetor, int tamanho){
+    int i, j;
+    for(i = 0; i < tamanho - 1; i++){
+        for(j = 0; j < tamanho - i - 1; j++){
+            if(vetor[j].peso > vetor[j + 1].peso){
+                ArestaKruskal temp = vetor[j];
+                vetor[j] = vetor[j + 1];
+                vetor[j+1] = temp;
+            }
+        }
+    }
+}
 VerticeBuscaProfundida* ordenacaoTopologica(GrafoLista *gf){
     VerticeBuscaProfundida *vetor = (VerticeBuscaProfundida*)malloc(gf->quantVertices * sizeof(VerticeBuscaProfundida));
     BuscaEmProfundidade(gf, vetor);
@@ -332,9 +378,7 @@ PILHA* ordenacaoTopologicaKahn(GrafoLista *gf){
 	
 	
 }
-void relaxamento(VerticeDjikstra *vetor, Vertice origem, Vertice destino, Peso peso){
-    
-}
+
 VerticeDjikstra* djikstra(GrafoLista *gf, Vertice comeco){
     VerticeDjikstra *vetor = (VerticeDjikstra*)malloc(gf->quantVertices*sizeof(VerticeDjikstra));
     int i;
@@ -370,9 +414,9 @@ VerticeDjikstra* djikstra(GrafoLista *gf, Vertice comeco){
 }
 /*
 Prim -> gera um grafo conexo de custo minimo
+serve pra grafos com pesos negativos
+nao servem para digrafo
 */
-// serve pra grafos com pesos negativos
-// nao servem para digrafo
 GrafoLista* prim(GrafoLista *gf, Vertice fonte){
     GrafoLista* grafoPrim = criarGrafo(gf->quantVertices, gf->eh_digrafo, gf->eh_com_peso);
     int* key = (int*)malloc(gf->quantVertices*sizeof(int));
@@ -407,5 +451,60 @@ GrafoLista* prim(GrafoLista *gf, Vertice fonte){
     return grafoPrim;
 }
 
+bool marcado(int *vetorMarcado, int procurado, int tamanhoVetor){
+    int i;
+    bool achou = false;
+    for(i = 0; i < tamanhoVetor; i++){
+        if(vetorMarcado[i] == procurado){
+            achou = true;
+            break;
+        }
+    }
+    return achou;
+}
+
+
+ArestaKruskal* retornarListaAresta(GrafoLista *gf){
+    int cont = 0;
+    ArestaKruskal *listaAresta = (ArestaKruskal*)malloc(tamanhoGrafo(gf)*sizeof(ArestaKruskal));
+    int *vetorMarcado = (int*)malloc(gf->quantVertices*sizeof(int));
+    int i;
+    for(i = 0; i < gf->quantVertices; i++){
+        vetorMarcado[i] = -1;
+    }
+    NO_ADJ *aux;
+    for(i = 0; i < gf->quantVertices; i++){
+        for(aux=gf->lista[i]; aux != NULL; aux=aux->prox){
+            if(!marcado(vetorMarcado, aux->vertice, gf->quantVertices)){
+                listaAresta[cont].fonte = i;
+                listaAresta[cont].destino = aux->vertice;
+                listaAresta[cont].peso = aux->peso;
+                cont++;
+            }
+        }
+        vetorMarcado[i] = i;
+    }
+    return listaAresta;
+
+}
+
+
+//Kruskal -> gera uma AGM
+GrafoLista* kruskal(GrafoLista *gf){
+    GrafoLista *set = criarGrafo(gf->quantVertices, gf->eh_digrafo, gf->eh_com_peso);
+    ArestaKruskal *arestas = retornarListaAresta(gf);
+    bubbleSortKruskal(arestas, tamanhoGrafo(gf));
+    int tamArestas = tamanhoGrafo(gf);
+    int i;
+    for(i = 0; i < tamArestas; i++){
+        bool achouLigacao = dfs(set, arestas[i].fonte, arestas[i].destino);
+        if(!achouLigacao){
+            inserirAresta(set, arestas[i].fonte, arestas[i].destino, arestas[i].peso, false);
+        }
+    }
+    return set;
+
+
+}
 
 #endif

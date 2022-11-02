@@ -2,10 +2,30 @@
 #include "ListaGrafos.h"
 
 int main(){
-    GrafoLista *gf = criarGrafo(3, false, false);
-	inserirAresta(gf, 0, 1, 0, false);
-	inserirAresta(gf, 1, 2, 0, false);
-	// mudr logica para desconsiderar o ida-volta do grafo
+    GrafoLista *gf = criarGrafo(5, false, true);
+	/* 
+	A: 0
+	B: 1
+	C: 2
+	D: 3
+	E: 4
+	 */
+	inserirAresta(gf, 0, 1, 5, false);
+	inserirAresta(gf, 0, 2, 6, false);
+	inserirAresta(gf, 0, 3, 9, false);
+	inserirAresta(gf, 0, 4, 10, false);
+	inserirAresta(gf, 1, 3, 3, false);
+	inserirAresta(gf, 2, 4, 1, false);
+	inserirAresta(gf, 2, 3, 8, false);
+	inserirAresta(gf, 3, 4, 2, false);
+	imprimeLista(gf);
+	GrafoLista *grafoKruskal = kruskal(gf);
+	printf("=============\n");
+	imprimeLista(grafoKruskal);
+	return 0;
+}
+/* 
+	
 	int ordeem = ordemGrafo(gf);
 	int tam = tamanhoGrafo(gf);
 	int maxArco = maximoArestas(gf);
@@ -22,9 +42,7 @@ int main(){
 		printf("Vertice %d\n", i+1);
 		printf("grau: %d\n", grauAux.grauGrafo[i]);
 		printf("\n");
-	}
-	return 0;
-}
+	} */
 /* GrafoLista *gf = criarGrafo(5, false, true);
     //VerticeDjikstra *vetor;
 	inserirAresta(gf, 0, 1, 3, false);
