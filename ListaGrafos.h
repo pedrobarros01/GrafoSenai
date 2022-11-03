@@ -510,7 +510,7 @@ GrafoLista* kruskal(GrafoLista *gf){
 }
 GrafoLista* criarGrafoPorArquivo(char *nomeArquivo){
     FILE *arq = fopen(nomeArquivo, "r");
-    //verificar se arq == null
+    //verificar se arq == null pra erro
     char stringArquivo[100];
     fgets(stringArquivo, sizeof(stringArquivo), arq);
     char *sub1 = strtok(stringArquivo, " \n");
@@ -586,14 +586,16 @@ GrafoLista* criarGrafoPorArquivo(char *nomeArquivo){
         printf("Peso: %d\n", listaArestas[i].peso);
         printf("=================================\n");
     }
-    /* 
-    Criar Grafo e retornar ele
-     */
     GrafoLista *gf = criarGrafo(numVertice, ehDrigrafo, ehComPeso);
     for(i = 0; i < numArestas; i++){
         inserirAresta(gf, listaArestas[i].fonte, listaArestas[i].destino, listaArestas[i].peso, ehDrigrafo);
     }
     return gf;
 }
+
+
+
+
+
 
 #endif
