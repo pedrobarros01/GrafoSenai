@@ -7,6 +7,7 @@
 #include<stdlib.h>
 #include<stdbool.h>
 #include<stdio.h>
+#include<string.h>
 #include "fila.h"
 #include "lista.h"
 #include "pilha.h"
@@ -70,6 +71,9 @@ GrafoLista* criarGrafo(int quantVertices, bool eh_digrafo, bool eh_com_peso){
     }
     return gf;
 }
+
+
+
 bool temVertice(int vertice, GrafoLista *gf){
     if(vertice <= gf->quantVertices){
         return true;
@@ -503,8 +507,93 @@ GrafoLista* kruskal(GrafoLista *gf){
         }
     }
     return set;
-
-
+}
+GrafoLista* criarGrafoPorArquivo(char *nomeArquivo){
+    FILE *arq = fopen(nomeArquivo, "r");
+    //verificar se arq == null
+    char stringArquivo[100];
+    fgets(stringArquivo, sizeof(stringArquivo), arq);
+    char *sub1 = strtok(stringArquivo, " \n");
+    int numVertice, numArestas = 0;
+    int cont = 0;
+    int indiceAresta = 0;
+    int arestaFonte, arestaDestino, peso;
+    bool ehDrigrafo = false;
+    bool ehComPeso = false;
+    while(sub1){
+        if(strcmp(sub1, "Vertices") != 0){
+            numVertice = atoi(sub1);
+        }
+        sub1 = strtok(NULL, " \n");
+    }
+    while(fgets(stringArquivo, sizeof(stringArquivo), arq) != NULL){
+        if(cont == numVertice){
+            //printf("%s", stringArquivo);
+            if(strcmp("*Arcs\n", stringArquivo) == 0){
+                ehDrigrafo = true;
+            }else if(strcmp("*Edges\n", stringArquivo) == 0){
+                ehDrigrafo = false;
+            }
+        }else if(cont >= numVertice + 1){
+            numArestas++;
+        }
+        cont++;
+    }
+    fclose(arq);
+    ArestaKruskal *listaArestas = (ArestaKruskal*)malloc(numArestas * sizeof(ArestaKruskal));
+    FILE *arq2 = fopen(nomeArquivo, "r");
+    char stringArquivo2[1000];
+    cont = 0;
+    int contAux = 0;
+    while(fgets(stringArquivo2, sizeof(stringArquivo2), arq2) != NULL){
+        if(cont >= numVertice + 2){
+            char *px = strtok(stringArquivo2, " \n");
+           while(px){
+                contAux++;
+                if(contAux == 1){
+                    arestaFonte = atoi(px) - 1;
+                }
+                if(contAux == 2){
+                    arestaDestino = atoi(px) - 1;
+                }
+                if(contAux == 3){
+                    peso = atoi(px);
+                    ehComPeso = true;
+                }else{
+                    ehComPeso = false;
+                    peso = 0;
+                }
+                px = strtok(NULL, " \n");
+           }
+            listaArestas[indiceAresta].fonte = arestaFonte;
+            listaArestas[indiceAresta].destino = arestaDestino;
+            listaArestas[indiceAresta].peso = peso;
+            indiceAresta++;
+            contAux = 0;            
+            
+        }
+        cont++;
+    }
+    printf("ehDigrafo: %d\n", ehDrigrafo);
+    printf("numArestas: %d\n", numArestas);
+    printf("numVertice: %d\n", numVertice);
+    fclose(arq2);
+    int i;
+    for(i = 0; i < numArestas; i++){
+        printf("Aresta %d\n", i+1);
+        printf("Fonte: %d\n", listaArestas[i].fonte);
+        printf("Destino: %d\n", listaArestas[i].destino);
+        printf("Peso: %d\n", listaArestas[i].peso);
+        printf("=================================\n");
+    }
+    /* 
+    Criar Grafo e retornar ele
+     */
+    GrafoLista *gf = criarGrafo(numVertice, ehDrigrafo, ehComPeso);
+    for(i = 0; i < numArestas; i++){
+        inserirAresta(gf, listaArestas[i].fonte, listaArestas[i].destino, listaArestas[i].peso, ehDrigrafo);
+    }
+    return gf;
 }
 
 #endif

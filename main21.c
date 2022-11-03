@@ -2,14 +2,18 @@
 #include "ListaGrafos.h"
 
 int main(){
-    GrafoLista *gf = criarGrafo(5, false, true);
+    GrafoLista *gf = criarGrafoPorArquivo("arquivo.txt");
+	imprimeLista(gf);
+	return 0;
+}
+
+/* GrafoLista *gf = criarGrafo(5, false, true);
 	/* 
 	A: 0
 	B: 1
 	C: 2
 	D: 3
 	E: 4
-	 */
 	inserirAresta(gf, 0, 1, 5, false);
 	inserirAresta(gf, 0, 2, 6, false);
 	inserirAresta(gf, 0, 3, 9, false);
@@ -21,9 +25,9 @@ int main(){
 	imprimeLista(gf);
 	GrafoLista *grafoKruskal = kruskal(gf);
 	printf("=============\n");
-	imprimeLista(grafoKruskal);
-	return 0;
-}
+	imprimeLista(grafoKruskal); */
+
+
 /* 
 	
 	int ordeem = ordemGrafo(gf);
