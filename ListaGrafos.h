@@ -131,7 +131,12 @@ NO_ADJ *lista;
         printf("%d: ", i);
         lista = gf->lista[i];
         while(lista != NULL){
-            printf("%d | Peso: %d ,", lista->vertice, lista->peso);
+            if(lista->prox == NULL){
+                printf("[%d | Peso: %d]", lista->vertice, lista->peso);
+            }else{
+                printf("[%d | Peso: %d] -> ", lista->vertice, lista->peso);
+
+            }
             lista=lista->prox;
         }
         printf("\n");
@@ -511,6 +516,9 @@ GrafoLista* kruskal(GrafoLista *gf){
 GrafoLista* criarGrafoPorArquivo(char *nomeArquivo){
     FILE *arq = fopen(nomeArquivo, "r");
     //verificar se arq == null pra erro
+    if(arq == NULL){
+        return NULL;
+    }
     char stringArquivo[100];
     fgets(stringArquivo, sizeof(stringArquivo), arq);
     char *sub1 = strtok(stringArquivo, " \n");
@@ -542,6 +550,9 @@ GrafoLista* criarGrafoPorArquivo(char *nomeArquivo){
     fclose(arq);
     ArestaKruskal *listaArestas = (ArestaKruskal*)malloc(numArestas * sizeof(ArestaKruskal));
     FILE *arq2 = fopen(nomeArquivo, "r");
+    if(arq2 == NULL){
+        return NULL;
+    }
     char stringArquivo2[1000];
     cont = 0;
     int contAux = 0;
@@ -574,18 +585,8 @@ GrafoLista* criarGrafoPorArquivo(char *nomeArquivo){
         }
         cont++;
     }
-    printf("ehDigrafo: %d\n", ehDrigrafo);
-    printf("numArestas: %d\n", numArestas);
-    printf("numVertice: %d\n", numVertice);
     fclose(arq2);
     int i;
-    for(i = 0; i < numArestas; i++){
-        printf("Aresta %d\n", i+1);
-        printf("Fonte: %d\n", listaArestas[i].fonte);
-        printf("Destino: %d\n", listaArestas[i].destino);
-        printf("Peso: %d\n", listaArestas[i].peso);
-        printf("=================================\n");
-    }
     GrafoLista *gf = criarGrafo(numVertice, ehDrigrafo, ehComPeso);
     for(i = 0; i < numArestas; i++){
         inserirAresta(gf, listaArestas[i].fonte, listaArestas[i].destino, listaArestas[i].peso, ehDrigrafo);
