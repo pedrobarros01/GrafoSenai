@@ -4,7 +4,7 @@
 int main(){
     GrafoLista *gf = criarGrafoPorArquivo("arquivo.txt");
 	imprimeLista(gf);
-	GrafoLista* grafoPrim = prim(gf, 0);
+	 GrafoLista* grafoPrim = prim(gf, 0);
 	GrafoLista* grafoKruskal = kruskal(gf);
 	printf("====PRIM=====\n");
 	imprimeLista(grafoPrim);
