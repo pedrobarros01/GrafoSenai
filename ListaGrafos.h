@@ -529,7 +529,7 @@ GrafoLista* criarGrafoPorArquivo(char *nomeArquivo){
     bool ehDrigrafo = false;
     bool ehComPeso = false;
     while(sub1){
-        if(strcmp(sub1, "Vertices") != 0){
+        if(strcmp(sub1, "*Vertices") != 0){
             numVertice = atoi(sub1);
         }
         sub1 = strtok(NULL, " \n");
